@@ -5,6 +5,31 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Home'),
+      ),
+      body: Container(
+        padding: const EdgeInsets.all(24.0),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text('Schedule a notification:'),
+              const SizedBox(height: 16.0),
+              ElevatedButton(
+                onPressed: () {
+                  showTimePicker(
+                    context: context,
+                    initialTime: TimeOfDay.now(),
+                  );
+                },
+                child: const Text('Schedule'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
