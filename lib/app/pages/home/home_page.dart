@@ -15,7 +15,7 @@ class HomePage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text('Schedule a notification:'),
+              const Text('Show a notification in 5 seconds:'),
               const SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: () {
