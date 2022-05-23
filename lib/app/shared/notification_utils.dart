@@ -39,7 +39,10 @@ class NotificationsUtils {
     //threadIdentifier: String? /*(only from iOS 10 onwards)*/,
   );
 
-  Future<void> showNotification() async {
+  Future<void> showNotification({
+    required String title,
+    required String body,
+  }) async {
     NotificationDetails? platformSpecificDetails;
 
     if (Platform.isIOS) {
@@ -57,8 +60,8 @@ class NotificationsUtils {
     if (platformSpecificDetails != null) {
       await flutterLocalNotificationsPlugin.show(
         1,
-        "A Notification From My Application",
-        "This notification was sent using Flutter Local Notifcations Package",
+        title,
+        body,
         platformSpecificDetails,
         payload: 'data',
       );

@@ -5,6 +5,11 @@ class ReminderPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      appBar: AppBar(title: const Text('Notification')),
+      body: SizedBox(
+        child: Text('You selected a notification sent on DATE'),
+      ),
+    );
   }
 }
