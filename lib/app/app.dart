@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:study_flutter_local_push_notifications/app/pages/home/home_page.dart';
-import 'package:study_flutter_local_push_notifications/app/pages/reminder/reminder_page.dart';
+import 'package:study_flutter_local_push_notifications/app/pages/notification/notification_module.dart';
 
 class App extends StatelessWidget {
   const App({Key? key}) : super(key: key);
@@ -12,7 +12,7 @@ class App extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const HomePage(),
-        '/reminder': (context) => const ReminderPage(),
+        '/notification': (context) => const NotificationModule(),
       },
     );
   }
