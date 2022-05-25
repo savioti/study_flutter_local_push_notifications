@@ -42,6 +42,19 @@ class HomePage extends StatelessWidget {
       );
     }
 
+    void _scheduleNotification(DateTime date, TimeOfDay time) {
+      final isoDate = DateTime.now().toIso8601String();
+
+      NotificationsUtils.instance.scheduleNotification(
+        title: 'A local push notification',
+        body: 'This is a local push notification example.',
+        payload: '/notification?$isoDate',
+        onSelectNotification: _onSelectNotification,
+        date: date,
+        time: time,
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home'),
@@ -63,6 +76,29 @@ class HomePage extends StatelessWidget {
               const SizedBox(height: 8.0),
               ElevatedButton(
                 onPressed: () => _showNotificationInTime(5),
+                child: const Text('Schedule'),
+              ),
+              const SizedBox(height: 64.0),
+              const Text('Schedule a notification'),
+              const SizedBox(height: 8.0),
+              ElevatedButton(
+                onPressed: () async {
+                  final selectedDate = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime.now(),
+                    lastDate: DateTime(2100),
+                  );
+
+                  final selectedTime = await showTimePicker(
+                    context: context,
+                    initialTime: TimeOfDay.now(),
+                  );
+
+                  if (selectedDate != null && selectedTime != null) {
+                    _scheduleNotification(selectedDate, selectedTime);
+                  }
+                },
                 child: const Text('Schedule'),
               ),
             ],

@@ -1,7 +1,10 @@
 import 'dart:io';
 
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_native_timezone/flutter_native_timezone.dart';
+import 'package:timezone/timezone.dart' as tz;
+import 'package:timezone/data/latest.dart' as tz;
 
 class NotificationsUtils {
   NotificationsUtils._();
@@ -21,6 +24,8 @@ class NotificationsUtils {
   Future<void> initialize(
       {Future Function(String?)? selectNotification}) async {
     WidgetsFlutterBinding.ensureInitialized();
+
+    await _initializeTimeZone();
 
     isInitialized = await flutterLocalNotificationsPlugin.initialize(
       _initializationSettings(),
@@ -51,7 +56,6 @@ class NotificationsUtils {
     required Future Function(String?) onSelectNotification,
   }) async {
     await initialize(selectNotification: onSelectNotification);
-
     final platformSpecificDetails = _platformNotificationDetails();
 
     if (platformSpecificDetails != null) {
@@ -63,6 +67,43 @@ class NotificationsUtils {
         payload: payload,
       );
     }
+  }
+
+  Future<void> scheduleNotification({
+    required String title,
+    required String body,
+    required String payload,
+    required Future Function(String?) onSelectNotification,
+    required DateTime date,
+    required TimeOfDay time,
+  }) async {
+    final platformSpecificDetails = _platformNotificationDetails();
+
+    if (platformSpecificDetails == null) {
+      return;
+    }
+
+    await initialize(selectNotification: onSelectNotification);
+
+    final dateTime = DateTime(
+      date.year,
+      date.month,
+      date.day,
+      time.hour,
+      time.minute,
+    );
+    final zonedDate = tz.TZDateTime.from(dateTime, tz.local);
+
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      1,
+      title,
+      body,
+      zonedDate,
+      platformSpecificDetails,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+      androidAllowWhileIdle: true,
+    );
   }
 
   String getPendingPayload() {
@@ -78,7 +119,7 @@ class NotificationsUtils {
 
   InitializationSettings _initializationSettings() {
     const initializationSettingsAndroid =
-        AndroidInitializationSettings('@drawable/app_icon');
+        AndroidInitializationSettings('app_icon');
 
     const initializationSettingsIos = IOSInitializationSettings(
       requestSoundPermission: false,
@@ -135,4 +176,15 @@ class NotificationsUtils {
     //subtitle: String?, //Secondary description  (only from iOS 10 onwards)
     //threadIdentifier: String? /*(only from iOS 10 onwards)*/,
   );
+
+  Future<void> _initializeTimeZone() async {
+    if (isInitialized != null && isInitialized!) {
+      return;
+    }
+
+    tz.initializeTimeZones();
+    final locationName = await FlutterNativeTimezone.getLocalTimezone();
+    final location = tz.getLocation(locationName);
+    tz.setLocalLocation(location);
+  }
 }
